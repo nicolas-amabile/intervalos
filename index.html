@@ -189,7 +189,7 @@
             const targetNote = calculateTargetNote(startNote, interval, direction);
 
             return {
-                challenge: `${interval.name} ${direction} de ${startNote}`,
+                challenge: `${interval.name} ${direction} de ${startNote.split('/')[0]}`,
                 result: targetNote
             };
         }
