@@ -41,13 +41,6 @@
             width: 100%;
         }
 
-        .title {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 2rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .challenge-container {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -66,18 +59,6 @@
             font-weight: 600;
             margin-bottom: 1rem;
             min-height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .countdown {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #ffeb3b;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin: 1rem 0;
-            min-height: 5rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -107,7 +88,6 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
             width: 100%;
-            opacity: 0;
         }
 
         .retry-button:hover {
@@ -131,6 +111,11 @@
             transition: opacity 0.3s ease;
             display: block;
         }
+
+        .blur {
+            filter: blur(1rem);
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -138,11 +123,10 @@
     <div class="container">
         <div class="challenge-container">
             <div id="challenge" class="challenge"></div>
-            <div id="countdown" class="countdown hidden"></div>
-            <div id="result" class="result hidden"></div>
+            <div id="result" class="result"></div>
         </div>
 
-        <button id="retryButton" class="retry-button" onclick="startNewChallenge()">Otro?</button>
+        <button id="retryButton" class="retry-button hidden" onclick="startNewChallenge()">Otro?</button>
     </div>
 
     <script>
@@ -217,57 +201,29 @@
             }
         }
 
-        // Start countdown
-        function startCountdown(callback) {
-            let count = 5;
-            const countdownElement = document.getElementById('countdown');
-
-            showElement('countdown');
-            countdownElement.textContent = count;
-
-            countdownInterval = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    countdownElement.textContent = count;
-                } else {
-                    clearInterval(countdownInterval);
-                    hideElement('countdown');
-                    callback();
-                }
-            }, 1000);
-        }
-
         // Show result
         function showResult(result) {
             const resultElement = document.getElementById('result');
             resultElement.textContent = result;
-            showElement('result');
+            resultElement.classList.remove('blur')
             showElement('retryButton');
         }
 
         // Start new challenge
         function startNewChallenge() {
-            // Clear any existing countdown
-            if (countdownInterval) {
-                clearInterval(countdownInterval);
-            }
-
-            // Hide result
-            hideElement('result');
-            hideElement('countdown');
             hideElement('retryButton', true);
 
-            // Generate new challenge
             const { challenge, result } = generateChallenge();
 
             // Show challenge
             const challengeElement = document.getElementById('challenge');
             challengeElement.textContent = challenge;
 
-            // Start countdown
-            startCountdown(() => {
-                showResult(result);
-            });
+            // Show result
+            const resultElement = document.getElementById('result');
+            resultElement.textContent = 'X';
+            resultElement.classList.add('blur')
+            resultElement.addEventListener('click', () => showResult(result))
         }
 
         // Initialize the app
