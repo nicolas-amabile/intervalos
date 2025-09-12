@@ -75,6 +75,7 @@
             align-items: center;
             justify-content: center;
             overflow: visible;
+            transform: scale(1.03);
         }
 
         .retry-button {
@@ -115,7 +116,15 @@
 
         .blur {
             filter: blur(1rem);
+            -webkit-filter: blur(1rem);
             cursor: pointer;
+        }
+
+        .no-blur {
+            filter: blur(0);
+            -webkit-filter: blur(0);
+            cursor: default;
+            transition: filter 900ms;
         }
     </style>
 </head>
@@ -207,6 +216,7 @@
             const resultElement = document.getElementById('result');
             resultElement.textContent = result;
             resultElement.classList.remove('blur')
+            resultElement.classList.add('no-blur')
             showElement('retryButton');
         }
 
@@ -224,6 +234,7 @@
             const resultElement = document.getElementById('result');
             resultElement.textContent = 'X';
             resultElement.classList.add('blur')
+            resultElement.classList.remove('no-blur')
             resultElement.addEventListener('click', () => showResult(result))
         }
 
