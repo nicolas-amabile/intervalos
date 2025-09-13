@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width; initial-scale=1; viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="icon" href="icono.png" type="image/png">
 
     <title>Intervalos</title>
@@ -11,238 +11,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Intervalos">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #2a2c2f;
-            max-height: calc(100vh - 40px);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 100px 20px;
-            color: white;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .challenge-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            width: 100%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            height: 15rem;
-            align-content: center;
-        }
-
-        .challenge {
-            font-size: clamp(1.2rem, 8vw, 2rem);
-            font-weight: 600;
-            margin-bottom: 1rem;
-            min-height: 3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .result {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #67bb6a;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            margin: 1rem 0;
-            min-height: 5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: visible;
-            transform: scale(1.03);
-        }
-
-        .retry-button {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            padding: 1rem 2rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            width: 100%;
-        }
-
-        .retry-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .retry-button:active {
-            transform: translateY(0);
-        }
-
-        .hidden {
-            opacity: 0;
-            visibility: hidden;
-            display: none;
-        }
-
-        .visible {
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.3s ease;
-            display: block;
-        }
-
-        .blur {
-            filter: blur(1rem);
-            -webkit-filter: blur(1rem);
-            cursor: pointer;
-        }
-
-        .no-blur {
-            filter: blur(0);
-            -webkit-filter: blur(0);
-            cursor: default;
-            transition: filter 900ms;
-        }
-    </style>
+    <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
+    <script src="./main.js"></script>
+    <audio id="root-note-audio"></audio>
+    <audio id="result-note-audio"></audio>
     <div class="container">
         <div class="challenge-container">
-            <div id="challenge" class="challenge"></div>
-            <div id="result" class="result"></div>
+            <div id="challenge" class="challenge">
+                <span id="interval" class="interval"></span>
+                <span id="direction" class="direction bold"></span>
+                <span> de </span>
+                <span id="root-note" class="root-note bold"></span>
+            </div>
+            <div id="result" class="result bold"></div>
         </div>
 
-        <button id="retryButton" class="retry-button hidden" onclick="startNewChallenge()">Otro?</button>
+        <button id="retryButton" class="retry-button hidden" onclick="startNewChallenge()">
+            Otro?
+        </button>
     </div>
-
-    <script>
-        const NOTES = ['C', 'C# / Db', 'D', 'D# / Eb', 'E', 'F', 'F# / Gb', 'G', 'G# / Ab', 'A', 'A# / Bb', 'B'];
-
-        const INTERVALS = [
-            // { name: 'Unisono', semitones: 0 },
-            { name: 'II m', semitones: 1 },
-            { name: 'II M', semitones: 2 },
-            { name: 'III m', semitones: 3 },
-            { name: 'III M', semitones: 4 },
-            { name: 'IV Justa', semitones: 5 },
-            { name: 'IV Aumentada', semitones: 6 },
-            { name: 'V Justa', semitones: 7 },
-            { name: 'VI m', semitones: 8 },
-            { name: 'VI M', semitones: 9 },
-            { name: 'VII m', semitones: 10 },
-            { name: 'VII M', semitones: 11 },
-            // { name: 'Octava', semitones: 12 }
-        ];
-
-        const DIRECTIONS = ['ASC', 'DSC'];
-
-        let countdownInterval;
-
-        // Helper function to get random element from array
-        function getRandomElement(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-
-        // Calculate the target note based on starting note, interval, and direction
-        function calculateTargetNote(startNote, interval, direction) {
-            const startIndex = NOTES.indexOf(startNote);
-            let targetIndex;
-
-            if (direction === 'ASC') {
-                targetIndex = (startIndex + interval.semitones) % 12;
-            } else { // DSC
-                targetIndex = (startIndex - interval.semitones + 12) % 12;
-            }
-
-            return NOTES[targetIndex];
-        }
-
-        // Generate a random challenge
-        function generateChallenge() {
-            const startNote = getRandomElement(NOTES);
-            const interval = getRandomElement(INTERVALS);
-            const direction = getRandomElement(DIRECTIONS);
-
-            const targetNote = calculateTargetNote(startNote, interval, direction);
-
-            return {
-                challenge: `${interval.name} ${direction} de ${startNote.split('/')[0]}`,
-                result: targetNote
-            };
-        }
-
-        // Update UI elements visibility
-        function showElement(elementId) {
-            const element = document.getElementById(elementId);
-            element.classList.remove('hidden');
-            element.classList.add('visible');
-        }
-
-        function hideElement(elementId, keepSize = false) {
-            const element = document.getElementById(elementId);
-            element.classList.remove('visible');
-            element.classList.add('hidden');
-            if (keepSize) {
-                element.style.display = 'block';
-            }
-        }
-
-        // Show result
-        function showResult(result) {
-            const resultElement = document.getElementById('result');
-            resultElement.textContent = result;
-            resultElement.classList.remove('blur')
-            resultElement.classList.add('no-blur')
-            showElement('retryButton');
-        }
-
-        // Start new challenge
-        function startNewChallenge() {
-            hideElement('retryButton', true);
-
-            const { challenge, result } = generateChallenge();
-
-            // Show challenge
-            const challengeElement = document.getElementById('challenge');
-            challengeElement.textContent = challenge;
-
-            // Show result
-            const resultElement = document.getElementById('result');
-            resultElement.textContent = 'X';
-            resultElement.classList.add('blur')
-            resultElement.classList.remove('no-blur')
-            resultElement.addEventListener('click', () => showResult(result))
-        }
-
-        // Initialize the app
-        window.onload = function () {
-            startNewChallenge();
-        };
-    </script>
 </body>
 
 </html>
