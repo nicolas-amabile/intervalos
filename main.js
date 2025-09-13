@@ -102,18 +102,22 @@ function startNewChallenge() {
   rootNoteElement.textContent = startNote
 
   const challengeContainer = document.getElementById('challenge')
-  challengeContainer.addEventListener('click', () => rootAudio.play())
+  addListener(challengeContainer, 'click', () => rootAudio.play())
 
   // Show result
   const resultElement = document.getElementById('result');
   resultElement.textContent = 'X';
   resultElement.classList.add('blur')
   resultElement.classList.remove('no-blur')
-  resultElement.addEventListener('click', () => {
-    showResult(result)
-    resultElement.addEventListener('click', () => {
+  removeAllListeners(resultElement, 'click')
+  addListener(resultElement, 'click', () => {
+    const showingResult = !document.getElementById('retryButton').classList.contains('hidden')
+
+    if (showingResult) {
       resultAudio.play()
-    })
+    } else {
+      showResult(result)
+    }
   })
 }
 
