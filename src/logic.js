@@ -12,7 +12,6 @@ function calculateTargetNote(startNote, interval, direction) {
   return NOTES[targetIndex]
 }
 
-
 const getOctave = (direction, startNote, targetNote) => {
   const total = NOTES_FILE_NAME_ORDER.length
   const startNoteIndex = NOTES_FILE_NAME_ORDER.indexOf(firstChar(startNote))
@@ -21,9 +20,6 @@ const getOctave = (direction, startNote, targetNote) => {
   const diff = direction === DIRECTION.ASC
     ? targetNoteIndex - startNoteIndex
     : startNoteIndex - targetNoteIndex
-
-  const distanceToStart = startNoteIndex
-  const distanceToEnd = total - startNoteIndex
 
   const sameOctave = (direction === DIRECTION.ASC && startNoteIndex <= targetNoteIndex)
     || (direction === DIRECTION.DSC && targetNoteIndex <= startNoteIndex)

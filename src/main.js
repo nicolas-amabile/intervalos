@@ -17,9 +17,7 @@ function startNewChallenge() {
   const rootNoteElement = document.getElementById('root-note')
   rootNoteElement.textContent = singleNote(startNote)
 
-  const container = document.getElementById('container')
-  addListener(container, 'click', (e) => {
-    e.stopPropagation()
+  addListener(document.body, 'click', (e) => {
     rootAudio.play()
     resultAudio.play()
   })
