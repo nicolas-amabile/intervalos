@@ -4,6 +4,7 @@ const addListener = (node, event, handler, capture = false) => {
   if (!(event in _eventHandlers)) {
     _eventHandlers[event] = []
   }
+  removeAllListeners(node, event)
   // here we track the events and their nodes (note that we cannot
   // use node as Object keys, as they'd get coerced into a string
   _eventHandlers[event].push({ node: node, handler: handler, capture: capture })

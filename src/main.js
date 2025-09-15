@@ -17,18 +17,17 @@ function startNewChallenge() {
   const rootNoteElement = document.getElementById('root-note')
   rootNoteElement.textContent = singleNote(startNote)
 
+  const container = document.getElementById('container')
+  addListener(container, 'click', (e) => {
+    e.stopPropagation()
+    rootAudio.play()
+    resultAudio.play()
+  })
+
   const challengeContainer = document.getElementById('challenge')
   addListener(challengeContainer, 'click', (e) => {
     e.stopPropagation()
     rootAudio.play()
-  })
-
-  const container = document.getElementById('container')
-  addListener(container, 'click', () => {
-    if (isShowingResult()) {
-      rootAudio.play()
-      resultAudio.play()
-    }
   })
 
   // Show result
@@ -36,7 +35,6 @@ function startNewChallenge() {
   resultElement.textContent = 'X'
   resultElement.classList.add('blur')
   resultElement.classList.remove('no-blur')
-  removeAllListeners(resultElement, 'click')
 
   addListener(resultElement, 'click', (e) => {
     e.stopPropagation()
@@ -45,6 +43,12 @@ function startNewChallenge() {
     } else {
       showResult(result)
     }
+  })
+
+  const retryButton = document.getElementById('retryButton')
+  addListener(retryButton, 'click', (e) => {
+    e.stopPropagation()
+    startNewChallenge()
   })
 }
 
