@@ -1,27 +1,59 @@
-const NOTES = ['C', 'C# / Db', 'D', 'D# / Eb', 'E', 'F', 'F# / Gb', 'G', 'G# / Ab', 'A', 'A# / Bb', 'B']
-const NOTES_FILE_NAME_ORDER = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
-const INTERVALS = [
-  { name: 'II m', semitones: 1 },
-  { name: 'II M', semitones: 2 },
-  { name: 'III m', semitones: 3 },
-  { name: 'III M', semitones: 4 },
-  { name: 'IV Justa', semitones: 5 },
-  { name: 'IV Aumentada', semitones: 6 },
-  { name: 'V Justa', semitones: 7 },
-  { name: 'VI m', semitones: 8 },
-  { name: 'VI M', semitones: 9 },
-  { name: 'VII m', semitones: 10 },
-  { name: 'VII M', semitones: 11 },
-]
+const SHIFTS = {
+  FLAT: 'b',
+  NATURAL: '',
+  SHARP: '#',
+}
+
+const INTERVALS = {
+  II: 1,
+  III: 2,
+  IV: 3,
+  V: 4,
+  VI: 5,
+  VII: 6,
+}
+
+const AUGMENTED_DIMINISHED = [INTERVALS.IV, INTERVALS.V]
+
+const INTERVAL_QUALITY = {
+  REGULAR: {
+    m: 'm',
+    M: 'M',
+  },
+  AUGMENTED_DIMINISHED: {
+    DISMINUIDA: 'Disminuida',
+    JUSTA: 'Justa',
+    AUMENTADA: 'Aumentada',
+  },
+}
+
+// Tests
+const FULL_INTERVAL_QUALITY = { ...INTERVAL_QUALITY.REGULAR, ...INTERVAL_QUALITY.AUGMENTED_DIMINISHED }
+
+const getQualityOptionsForInterval = (interval) =>
+  AUGMENTED_DIMINISHED.includes(interval) ? INTERVAL_QUALITY.AUGMENTED_DIMINISHED : INTERVAL_QUALITY.REGULAR
 
 const DIRECTION = {
   ASC: 'ASC',
-  DSC: 'DSC'
+  DSC: 'DSC',
 }
 
 const OCTAVE = {
   LOW: 3,
   DEFAULT: 4,
   HIGH: 5,
+}
+
+module.exports = {
+  NOTES,
+  SHIFTS,
+  INTERVALS,
+  AUGMENTED_DIMINISHED,
+  INTERVAL_QUALITY,
+  FULL_INTERVAL_QUALITY,
+  DIRECTION,
+  OCTAVE,
+  getQualityOptionsForInterval,
 }

@@ -1,4 +1,4 @@
-var _eventHandlers = {}; // somewhere global
+var _eventHandlers = {} // somewhere global
 
 const addListener = (node, event, handler, capture = false) => {
   if (!(event in _eventHandlers)) {
@@ -18,7 +18,9 @@ const removeAllListeners = (targetNode, event) => {
     .forEach(({ node, handler, capture }) => node.removeEventListener(event, handler, capture))
 
   // update _eventHandlers global
-  _eventHandlers[event] = _eventHandlers[event].filter(
-    ({ node }) => node !== targetNode,
-  )
+  _eventHandlers[event] = _eventHandlers[event].filter(({ node }) => node !== targetNode)
+}
+
+module.exports = {
+  addListener,
 }

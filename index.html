@@ -4,26 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="icon" href="icono.png" type="image/png">
+    <link rel="icon" href="./assets/icono.png" type="image/png">
 
     <title>Intervalos</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Intervalos">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./assets/styles.css">
 </head>
 
 <body>
-    <script src="./src/event-handler.js"></script>
-    <script src="./src/constants.js"></script>
-    <script src="./src/utils.js"></script>
-    <script src="./src/logic.js"></script>
-    <script src="./src/ui.js"></script>
-    <script src="./src/main.js"></script>
-    <!-- <script src="./src/test.js"></script> -->
+    <script src="./bundle.js"></script>
+
     <audio id="root-note-audio"></audio>
     <audio id="result-note-audio"></audio>
+
     <div id="container" class="container">
         <div class="challenge-container">
             <div id="challenge" class="challenge">
@@ -35,9 +31,7 @@
             <div id="result" class="result bold"></div>
         </div>
 
-        <button id="retryButton" class="retry-button hidden">
-            Otro?
-        </button>
+        <button id="retryButton" class="retry-button hidden"> Otro? </button>
     </div>
 </body>
 

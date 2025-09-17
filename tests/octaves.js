@@ -1,18 +1,10 @@
-
-const test = (msg, actual, expected) => {
-  if (actual.octave !== expected) {
-    console.error(`- ❌ ${msg} - Esperado: ${expected} !== ${actual.octave}`)
-    console.info('🔎', actual)
-    return false
-  } else {
-    return true
-  }
-}
+const { DIRECTION, OCTAVE } = require('../src/constants')
 
 const { ASC, DSC } = DIRECTION
 const { DEFAULT, HIGH, LOW } = OCTAVE
 
-const TEST_CASES = [
+// const getOctave = (direction, startNote, targetNote)
+const OCTAVE_CASES = [
   // DEFAULT
   [ASC, 'A', 'A', DEFAULT],
   [ASC, 'A', 'B', DEFAULT],
@@ -141,16 +133,6 @@ const TEST_CASES = [
   [DSC, 'F', 'G', LOW],
 ]
 
-console.log('----------------------------------------------')
-const results = TEST_CASES.map(([direction, start, target, expected]) => {
-  const actual = getOctave(direction, start, target)
-  return test(`${direction} - ${start} -> ${target}`, actual, expected)
-})
-
-const total = TEST_CASES.length
-const pass = results.filter(Boolean).length
-const failed = total - pass
-
-console.log('----------------------------------------------')
-console.log(`❌ ${failed} - ✅ ${pass} - Total: ${total}`)
-console.log('----------------------------------------------')
+module.exports = {
+  OCTAVE_CASES,
+}
