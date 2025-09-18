@@ -1,9 +1,15 @@
 const NOTES = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
 const SHIFTS = {
-  FLAT: 'b',
-  NATURAL: '',
-  SHARP: '#',
+  FLAT: { text: 'b', offset: -1 },
+  NATURAL: { text: '', offset: 0 },
+  SHARP: { text: '#', offset: 1 },
+}
+
+const NOTE_SHIFT_TEXT = {
+  [-1]: 'b',
+  [0]: '',
+  [1]: '#',
 }
 
 const INTERVALS = {
@@ -19,13 +25,13 @@ const AUGMENTED_DIMINISHED = [INTERVALS.IV, INTERVALS.V]
 
 const INTERVAL_QUALITY = {
   REGULAR: {
-    m: 'm',
-    M: 'M',
+    m: { text: 'm', offset: -1 },
+    M: { text: 'M', offset: 0 },
   },
   AUGMENTED_DIMINISHED: {
-    DISMINUIDA: 'Disminuida',
-    JUSTA: 'Justa',
-    AUMENTADA: 'Aumentada',
+    DISMINUIDA: { text: 'Disminuida', offset: -1 },
+    JUSTA: { text: 'Justa', offset: 0 },
+    AUMENTADA: { text: 'Aumentada', offset: 1 },
   },
 }
 
@@ -49,6 +55,7 @@ const OCTAVE = {
 module.exports = {
   NOTES,
   SHIFTS,
+  NOTE_SHIFT_TEXT,
   INTERVALS,
   AUGMENTED_DIMINISHED,
   INTERVAL_QUALITY,

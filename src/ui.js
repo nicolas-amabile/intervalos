@@ -32,20 +32,20 @@ const isShowingResult = () => !document.getElementById('retryButton').classList.
 function startNewChallenge() {
   hideElement('retryButton', true)
 
-  const { interval, intervalQuality, direction, startNote, shift, result, octave } = generateChallenge()
+  const { interval, intervalQuality, direction, startNote, shift, targetNote, octave } = generateChallenge()
 
-  const rootAudio = getAudio({ note: startNote, id: 'root-note-audio' })
-  const resultAudio = getAudio({ note: result, id: 'result-note-audio', octave })
+  const rootAudio = getAudio(startNote, 'root-note-audio')
+  const resultAudio = getAudio(targetNote, 'result-note-audio')
 
   // Show challenge
   const intervalElement = document.getElementById('interval')
-  intervalElement.textContent = `${getKeyByValue(INTERVALS, interval)} ${intervalQuality}`
+  intervalElement.textContent = `${getKeyByValue(INTERVALS, interval)} ${intervalQuality.text}`
 
   const directionElement = document.getElementById('direction')
   directionElement.textContent = direction
 
   const rootNoteElement = document.getElementById('root-note')
-  rootNoteElement.textContent = `${startNote}${shift}`
+  rootNoteElement.textContent = startNote.text
 
   addListener(document.body, 'click', (e) => {
     rootAudio.play()
@@ -60,7 +60,7 @@ function startNewChallenge() {
 
   // Show result
   const resultElement = document.getElementById('result')
-  resultElement.textContent = result
+  resultElement.textContent = targetNote.text
   resultElement.classList.add('blur')
   resultElement.classList.remove('no-blur')
 

@@ -1,8 +1,8 @@
-function test(name, testCases, fn, debug) {
-  return testCases.reduce((acc, args) => {
+function test(name, testCases, fn, argsFormatter, debug) {
+  return testCases.map((args) => {
     const expected = args.pop()
     const actual = fn(args)
-    const testCaseName = `${name} - ${String(args)}`
+    const formattedArgs = argsFormatter(...args)
 
     const failed = actual !== expected
     const status = failed ? '❌' : '✅'
@@ -12,9 +12,8 @@ function test(name, testCases, fn, debug) {
       console.info('🔎', { args, actual })
     }
 
-    acc[testCaseName] = { status, actual, expected }
-    return acc
-  }, {})
+    return { ...formattedArgs, status, actual, expected }
+  })
 }
 
 module.exports = {
