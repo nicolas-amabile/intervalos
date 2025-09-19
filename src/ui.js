@@ -34,12 +34,12 @@ function startNewChallenge() {
 
   const { interval, intervalQuality, direction, startNote, shift, targetNote, octave } = generateChallenge()
 
-  const rootAudio = getAudio(startNote, 'root-note-audio')
-  const resultAudio = getAudio(targetNote, 'result-note-audio')
+  const rootAudio = getAudio(startNote.audio, 'root-note-audio')
+  const resultAudio = getAudio(targetNote.audio, 'result-note-audio')
 
   // Show challenge
   const intervalElement = document.getElementById('interval')
-  intervalElement.textContent = `${getKeyByValue(INTERVALS, interval)} ${intervalQuality.text}`
+  intervalElement.textContent = `${getKeyByValue(INTERVALS, interval)} ${intervalQuality}`
 
   const directionElement = document.getElementById('direction')
   directionElement.textContent = direction

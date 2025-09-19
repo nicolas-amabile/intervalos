@@ -1,5 +1,6 @@
 const {
   NOTES,
+  NOTES_ALL,
   DIRECTION,
   OCTAVE,
   SHIFTS,
@@ -8,13 +9,29 @@ const {
   getQualityOptionsForInterval,
 } = require('./constants')
 
-const { getRandomElement } = require('./utils')
+const { getRandomElement, getKeyByValue } = require('./utils')
 
 const isASC = (direction) => direction === DIRECTION.ASC
+const trim = (text = '') => text.replace(/ /g, '')
+const getFullNote = (note, shift) => `${note}${shift.text}`
+const getPlainNote = (text) => text.replace(/[\#b]/, '')
+const getShiftForNote = (note) => (note.includes('#') ? 1 : note.includes('b') ? -1 : 0)
+const isFlat = (note) => note.includes('b')
+const compareNotes = (a, b) => trim(a).includes(b)
 
-function getNextNoteIndex(note, interval, direction) {
-  const { length } = NOTES
-  const noteIndex = NOTES.indexOf(note)
+const indexForItem = (item, collection, compare = (a, b) => trim(a) === trim(b)) => {
+  let index = -1
+  collection.some((current, idx) => {
+    if (compare(current, item)) {
+      index = idx
+      return true
+    }
+  })
+  return index
+}
+
+function getNextNoteIndex(noteIndex, interval, direction, notes) {
+  const { length } = notes
   let targetIndex
   if (isASC(direction)) {
     targetIndex = (noteIndex + interval) % length
@@ -29,40 +46,57 @@ function getNextNoteIndex(note, interval, direction) {
 // Calculate the target note based on starting note, interval, and direction
 function calculateTargetNote(note, shift, interval, intervalQuality, direction) {
   const startIndex = NOTES.indexOf(note)
+  const startNoteWithShift = getFullNote(note, shift)
 
-  const targetIndex = getNextNoteIndex(note, interval, direction)
+  const startIndexAll = indexForItem(startNoteWithShift, NOTES_ALL, (a, b) => {
+    let match = false
+    a.split('/').forEach((part) => {
+      if (trim(part) === b) {
+        match = true
+        return true
+      }
+    })
+    return match
+  })
+
+  const targetIndex = getNextNoteIndex(startIndex, interval.offset, direction, NOTES)
   const targetNote = NOTES[targetIndex]
 
-  const targetNoteShift = shift.offset + interval + intervalQuality.offset - 1
-  const targetNoteShiftText = NOTE_SHIFT_TEXT[targetNoteShift]
+  const semitoneOffset = interval[intervalQuality]
 
-  const text = `${targetNote}${targetNoteShiftText}`
+  const indexForSemitone = getNextNoteIndex(startIndexAll, semitoneOffset, direction, NOTES_ALL)
+  const noteInSemitones = NOTES_ALL[indexForSemitone]
+
+  const text = trim(noteInSemitones.split('/').filter((option) => compareNotes(option, targetNote))[0])
 
   const ascending = isASC(direction)
   const sameOctave = (ascending && startIndex <= targetIndex) || (!ascending && targetIndex <= startIndex)
-
   const octave = sameOctave ? OCTAVE.DEFAULT : ascending ? OCTAVE.HIGH : OCTAVE.LOW
+
+  const audio = getAudioNameForNote(text, octave)
 
   return {
     text,
     note: targetNote,
-    offset: targetNoteShift,
     octave,
+    audio,
   }
 }
 
-function getAudioNameForNote(note) {
-  let properNote = note.note
-  const isFlat = note.offset < 0
-  if (isFlat) {
-    const prevNoteIndex = getNextNoteIndex(note.note, 1, DIRECTION.DSC)
+function getAudioNameForNote(note, octave) {
+  const _isFlat = isFlat(note)
+  let properNote = getPlainNote(note)
+  if (_isFlat) {
+    const prevNoteIndex = getNextNoteIndex(note, 1, DIRECTION.DSC, NOTES)
     const prevNote = NOTES[prevNoteIndex]
-    properNote = prevNote
+    const shift = ['B', 'E'].includes(prevNote) ? '' : '#'
+    properNote = `${prevNote}${shift}`
   }
 
-  const isFirstNote = NOTES.indexOf(note.note) === 0
-  const octave = isFlat && isFirstNote ? note.octave - 1 : note.octave // DCS: Ab -> G#
-  return `${properNote.toLowerCase()}${octave}`
+  const isFirstNote = NOTES.indexOf(getPlainNote(note)) === 0
+  // TODO: Check
+  const fixedOctave = _isFlat && isFirstNote ? octave - 1 : octave // Ab -> G#
+  return `${properNote.toLowerCase()}${fixedOctave}`
 }
 
 // Generate a random challenge
@@ -78,13 +112,14 @@ function generateChallenge() {
 
   const targetNote = calculateTargetNote(note, shift, interval, intervalQuality, direction)
 
-  const audio = getAudioNameForNote({ note, shift, octave: OCTAVE.DEFAULT })
+  const text = `${note}${shift.text}`
+
+  const audio = getAudioNameForNote(text, OCTAVE.DEFAULT)
 
   const startNote = {
-    text: `${note}${shift.text}`,
+    text,
     note,
     shift,
-    octave: OCTAVE.DEFAULT,
     audio,
   }
 
@@ -98,8 +133,7 @@ function generateChallenge() {
   }
 }
 
-function getAudio(note, id) {
-  const fileName = getAudioNameForNote(note)
+function getAudio(fileName, id) {
   const path = `./assets/notas/${fileName}.mp3`
   const audio = document.getElementById(id)
   audio.src = path
