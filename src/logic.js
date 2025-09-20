@@ -1,68 +1,150 @@
-// Calculate the target note based on starting note, interval, and direction
-function calculateTargetNote(startNote, interval, direction) {
-  const startIndex = NOTES.indexOf(startNote)
-  let targetIndex
+const {
+  NOTES,
+  NOTES_ALL,
+  DIRECTION,
+  OCTAVE,
+  SHIFTS,
+  INTERVALS,
+  AUDIO_FOR_NOTE,
+  getQualityOptionsForInterval,
+} = require('./constants')
 
-  if (direction === DIRECTION.ASC) {
-    targetIndex = (startIndex + interval.semitones) % 12
-  } else { // DSC
-    targetIndex = (startIndex - interval.semitones + 12) % 12
-  }
+const { getRandomElement, getKeyByValue } = require('./utils')
 
-  return NOTES[targetIndex]
+const isASC = (direction) => direction === DIRECTION.ASC
+const trim = (text = '') => text.replace(/ /g, '')
+const getFullNote = (note, shift) => `${note}${shift.text}`
+const getPlainNote = (text) => text.replace(/[\#b]/g, '')
+const compareNotes = (a, b) => trim(a).includes(b)
+
+const indexForItem = (item, collection, compare = (a, b) => trim(a) === trim(b)) => {
+  let index = -1
+  collection.some((current, idx) => {
+    if (compare(current, item)) {
+      index = idx
+      return true
+    }
+  })
+  return index
 }
 
-const getOctave = (direction, startNote, targetNote) => {
-  const total = NOTES_FILE_NAME_ORDER.length
-  const startNoteIndex = NOTES_FILE_NAME_ORDER.indexOf(firstChar(startNote))
-  const targetNoteIndex = NOTES_FILE_NAME_ORDER.indexOf(firstChar(targetNote))
+function getNextNoteIndex(noteIndex, interval, direction, notes) {
+  const { length } = notes
+  let targetIndex
+  if (isASC(direction)) {
+    targetIndex = (noteIndex + interval) % length
+  } else {
+    // DSC
+    targetIndex = (noteIndex - interval + length) % length
+  }
 
-  const diff = direction === DIRECTION.ASC
-    ? targetNoteIndex - startNoteIndex
-    : startNoteIndex - targetNoteIndex
+  return targetIndex
+}
 
-  const sameOctave = (direction === DIRECTION.ASC && startNoteIndex <= targetNoteIndex)
-    || (direction === DIRECTION.DSC && targetNoteIndex <= startNoteIndex)
+// Calculate the target note based on starting note, interval, and direction
+function calculateTargetNote(note, shift, interval, intervalQuality, direction) {
+  const startIndex = NOTES.indexOf(note)
+  const startNoteWithShift = getFullNote(note, shift)
 
-  const octave = sameOctave ? OCTAVE.DEFAULT : direction === DIRECTION.ASC ? OCTAVE.HIGH : OCTAVE.LOW
+  const startIndexAll = indexForItem(startNoteWithShift, NOTES_ALL, (a, b) => {
+    let match = false
+    a.split('/').forEach((part) => {
+      if (trim(part) === b) {
+        match = true
+        return true
+      }
+    })
+    return match
+  })
+
+  const targetIndex = getNextNoteIndex(startIndex, interval.offset, direction, NOTES)
+  const targetNote = NOTES[targetIndex]
+
+  const semitoneOffset = interval[intervalQuality]
+
+  const indexForSemitone = getNextNoteIndex(startIndexAll, semitoneOffset, direction, NOTES_ALL)
+  const noteInSemitones = NOTES_ALL[indexForSemitone]
+
+  const text = trim(
+    noteInSemitones.split('/').filter((option) => compareNotes(option, targetNote))[0]
+  )
+  const ascending = isASC(direction)
+  const sameOctave =
+    (ascending && startIndex <= targetIndex) || (!ascending && targetIndex <= startIndex)
+  const octave = sameOctave ? OCTAVE.DEFAULT : ascending ? OCTAVE.HIGH : OCTAVE.LOW
+
+  const audio = getAudioNameForNote(text, octave)
 
   return {
-    startNote,
-    startNoteIndex,
-    targetNote,
-    targetNoteIndex,
-    direction,
-    diff,
+    text,
+    note: targetNote,
+    shift: text.replace(targetNote, ''),
     octave,
-    sameOctave,
+    audio,
   }
+}
+
+function getAudioNameForNote(note, octave) {
+  const filename = AUDIO_FOR_NOTE[note]
+
+  const _isFlat = note.includes('b')
+  const _isSharp = note.includes('##')
+
+  const noteIndex = NOTES.indexOf(getPlainNote(note))
+  const isFirstNote = noteIndex === 0
+  const isLastNote = noteIndex === NOTES.length - 1
+
+  const fixedOctave =
+    _isFlat && isFirstNote ? octave - 1 : _isSharp && isLastNote ? octave + 1 : octave // Ab -> G# / G## -> A
+
+  return `${filename}${fixedOctave}`
 }
 
 // Generate a random challenge
 function generateChallenge() {
-  const startNote = getRandomElement(NOTES)
+  const note = getRandomElement(NOTES)
+  const shift = getRandomElement(SHIFTS)
   const interval = getRandomElement(INTERVALS)
-  const direction = getRandomElement(Object.values(DIRECTION))
 
-  const targetNote = calculateTargetNote(startNote, interval, direction)
-  const { octave } = getOctave(direction, startNote, targetNote)
+  const intervalQualityOptions = getQualityOptionsForInterval(interval)
+
+  const intervalQuality = getRandomElement(intervalQualityOptions)
+  const direction = getRandomElement(DIRECTION)
+
+  const targetNote = calculateTargetNote(note, shift, interval, intervalQuality, direction)
+
+  const text = `${note}${shift.text}`
+
+  const audio = getAudioNameForNote(text, OCTAVE.DEFAULT)
+
+  const startNote = {
+    text,
+    note,
+    shift: shift.text,
+    audio,
+  }
 
   return {
-    interval: interval.name,
+    interval,
+    intervalQuality,
     direction,
     startNote,
-    result: targetNote,
-    octave,
+    shift,
+    targetNote,
   }
 }
 
-// Filename for each note ends with ['3', '4', '5']
-// Root note on '4' - Result note calculated
-function getAudio({ note, id, octave = OCTAVE.DEFAULT }) {
-  const noteForPath = singleNote(note).replace('#', '-').toLowerCase()
-  const path = `./notas/${noteForPath}${octave}.mp3`
+function getAudio(fileName, id) {
+  const path = `./assets/notas/${fileName}.mp3`
   const audio = document.getElementById(id)
   audio.src = path
   audio.load()
   return audio
+}
+
+module.exports = {
+  calculateTargetNote,
+  getAudio,
+  getAudioNameForNote,
+  generateChallenge,
 }
