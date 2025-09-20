@@ -1,7 +1,7 @@
 function test(name, testCases, fn, argsFormatter, debug) {
   return testCases.map((args) => {
     const expected = args.pop()
-    const actual = fn(args)
+    const actual = fn(...args)
     const formattedArgs = argsFormatter(...args)
 
     const failed = actual !== expected

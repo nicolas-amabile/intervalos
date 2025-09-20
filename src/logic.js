@@ -6,6 +6,7 @@ const {
   SHIFTS,
   NOTE_SHIFT_TEXT,
   INTERVALS,
+  AUDIO_FOR_NOTE,
   getQualityOptionsForInterval,
 } = require('./constants')
 
@@ -14,9 +15,7 @@ const { getRandomElement, getKeyByValue } = require('./utils')
 const isASC = (direction) => direction === DIRECTION.ASC
 const trim = (text = '') => text.replace(/ /g, '')
 const getFullNote = (note, shift) => `${note}${shift.text}`
-const getPlainNote = (text) => text.replace(/[\#b]/, '')
-const getShiftForNote = (note) => (note.includes('#') ? 1 : note.includes('b') ? -1 : 0)
-const isFlat = (note) => note.includes('b')
+const getPlainNote = (text) => text.replace(/[\#b]/g, '')
 const compareNotes = (a, b) => trim(a).includes(b)
 
 const indexForItem = (item, collection, compare = (a, b) => trim(a) === trim(b)) => {
@@ -67,10 +66,13 @@ function calculateTargetNote(note, shift, interval, intervalQuality, direction) 
   const indexForSemitone = getNextNoteIndex(startIndexAll, semitoneOffset, direction, NOTES_ALL)
   const noteInSemitones = NOTES_ALL[indexForSemitone]
 
-  const text = trim(noteInSemitones.split('/').filter((option) => compareNotes(option, targetNote))[0])
+  const text = trim(
+    noteInSemitones.split('/').filter((option) => compareNotes(option, targetNote))[0]
+  )
 
   const ascending = isASC(direction)
-  const sameOctave = (ascending && startIndex <= targetIndex) || (!ascending && targetIndex <= startIndex)
+  const sameOctave =
+    (ascending && startIndex <= targetIndex) || (!ascending && targetIndex <= startIndex)
   const octave = sameOctave ? OCTAVE.DEFAULT : ascending ? OCTAVE.HIGH : OCTAVE.LOW
 
   const audio = getAudioNameForNote(text, octave)
@@ -84,19 +86,19 @@ function calculateTargetNote(note, shift, interval, intervalQuality, direction) 
 }
 
 function getAudioNameForNote(note, octave) {
-  const _isFlat = isFlat(note)
-  let properNote = getPlainNote(note)
-  if (_isFlat) {
-    const prevNoteIndex = getNextNoteIndex(note, 1, DIRECTION.DSC, NOTES)
-    const prevNote = NOTES[prevNoteIndex]
-    const shift = ['B', 'E'].includes(prevNote) ? '' : '#'
-    properNote = `${prevNote}${shift}`
-  }
+  const filename = AUDIO_FOR_NOTE[note]
 
-  const isFirstNote = NOTES.indexOf(getPlainNote(note)) === 0
-  // TODO: Check
-  const fixedOctave = _isFlat && isFirstNote ? octave - 1 : octave // Ab -> G#
-  return `${properNote.toLowerCase()}${fixedOctave}`
+  const _isFlat = note.includes('b')
+  const _isSharp = note.includes('##')
+
+  const noteIndex = NOTES.indexOf(getPlainNote(note))
+  const isFirstNote = noteIndex === 0
+  const isLastNote = noteIndex === NOTES.length - 1
+
+  const fixedOctave =
+    _isFlat && isFirstNote ? octave - 1 : _isSharp && isLastNote ? octave + 1 : octave // Ab -> G# / G## -> A
+
+  return `${filename}${fixedOctave}`
 }
 
 // Generate a random challenge
@@ -144,5 +146,6 @@ function getAudio(fileName, id) {
 module.exports = {
   calculateTargetNote,
   getAudio,
+  getAudioNameForNote,
   generateChallenge,
 }

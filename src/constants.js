@@ -56,10 +56,15 @@ const INTERVALS = {
 const AUGMENTED_DIMINISHED = [INTERVALS.IV, INTERVALS.V]
 
 // Tests
-const FULL_INTERVAL_QUALITY = { ...INTERVAL_QUALITY.REGULAR, ...INTERVAL_QUALITY.AUGMENTED_DIMINISHED }
+const FULL_INTERVAL_QUALITY = {
+  ...INTERVAL_QUALITY.REGULAR,
+  ...INTERVAL_QUALITY.AUGMENTED_DIMINISHED,
+}
 
 const getQualityOptionsForInterval = (interval) =>
-  AUGMENTED_DIMINISHED.includes(interval) ? INTERVAL_QUALITY.AUGMENTED_DIMINISHED : INTERVAL_QUALITY.REGULAR
+  AUGMENTED_DIMINISHED.includes(interval)
+    ? INTERVAL_QUALITY.AUGMENTED_DIMINISHED
+    : INTERVAL_QUALITY.REGULAR
 
 const DIRECTION = {
   ASC: 'ASC',
@@ -70,6 +75,44 @@ const OCTAVE = {
   LOW: 3,
   DEFAULT: 4,
   HIGH: 5,
+}
+
+const AUDIO_FOR_NOTE = {
+  Abb: 'g',
+  Ab: 'g-',
+  A: 'a',
+  'A#': 'a-',
+  'A##': 'b',
+  Bbb: 'a',
+  Bb: 'a-',
+  B: 'b',
+  'B#': 'c',
+  'B##': 'c-',
+  Cbb: 'b',
+  Cb: 'b',
+  C: 'c',
+  'C#': 'c-',
+  'C##': 'd',
+  Dbb: 'c',
+  Db: 'c-',
+  D: 'd',
+  'D#': 'd-',
+  'D##': 'e',
+  Ebb: 'd',
+  Eb: 'd-',
+  E: 'e',
+  'E#': 'f',
+  'E##': 'f-',
+  Fbb: 'd-',
+  Fb: 'e',
+  F: 'f',
+  'F#': 'f-',
+  'F##': 'g',
+  Gbb: 'f',
+  Gb: 'f-',
+  G: 'g',
+  'G#': 'g-',
+  'G##': 'a',
 }
 
 module.exports = {
@@ -83,5 +126,6 @@ module.exports = {
   FULL_INTERVAL_QUALITY,
   DIRECTION,
   OCTAVE,
+  AUDIO_FOR_NOTE,
   getQualityOptionsForInterval,
 }
