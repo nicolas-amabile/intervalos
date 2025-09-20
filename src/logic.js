@@ -4,7 +4,6 @@ const {
   DIRECTION,
   OCTAVE,
   SHIFTS,
-  NOTE_SHIFT_TEXT,
   INTERVALS,
   AUDIO_FOR_NOTE,
   getQualityOptionsForInterval,
@@ -69,7 +68,6 @@ function calculateTargetNote(note, shift, interval, intervalQuality, direction) 
   const text = trim(
     noteInSemitones.split('/').filter((option) => compareNotes(option, targetNote))[0]
   )
-
   const ascending = isASC(direction)
   const sameOctave =
     (ascending && startIndex <= targetIndex) || (!ascending && targetIndex <= startIndex)
@@ -80,6 +78,7 @@ function calculateTargetNote(note, shift, interval, intervalQuality, direction) 
   return {
     text,
     note: targetNote,
+    shift: text.replace(targetNote, ''),
     octave,
     audio,
   }
@@ -121,7 +120,7 @@ function generateChallenge() {
   const startNote = {
     text,
     note,
-    shift,
+    shift: shift.text,
     audio,
   }
 

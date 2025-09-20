@@ -21,12 +21,6 @@ const SHIFTS = {
   SHARP: { text: '#', offset: 1 },
 }
 
-const NOTE_SHIFT_TEXT = {
-  [-1]: 'b',
-  [0]: '',
-  [1]: '#',
-}
-
 const INTERVAL_QUALITY = {
   REGULAR: {
     m: 'm',
@@ -119,7 +113,6 @@ module.exports = {
   NOTES,
   NOTES_ALL,
   SHIFTS,
-  NOTE_SHIFT_TEXT,
   INTERVALS,
   AUGMENTED_DIMINISHED,
   INTERVAL_QUALITY,

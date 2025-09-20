@@ -50,29 +50,47 @@ body {
   justify-content: center;
   cursor: pointer;
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .challenge span {
   margin: 0 0.5rem 0 0;
 }
 
+.challenge .shift {
+  font-size: 1.5rem;
+}
+
+#root-note {
+  margin: 0;
+}
+
 .bold {
   font-weight: 400;
 }
 
-.result {
-  font-size: 3.5rem;
-  font-weight: bold;
+.shift {
+  font-weight: 100;
+  font-style: oblique;
+  font-size: 2rem;
+}
+
+#result-container {
   color: #67bb6a;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  margin: 1rem 0;
+  /* margin: 1rem 0; */
+  align-items: baseline;
   min-height: 5rem;
   display: flex;
-  align-items: center;
   justify-content: center;
   overflow: visible;
   transform: scale(1.03);
   cursor: pointer;
+}
+
+.result {
+  font-size: 3.5em;
+  font-weight: bold;
 }
 
 .retry-button {
