@@ -27,6 +27,7 @@ function showResult(result) {
 }
 
 const isShowingResult = () => !document.getElementById('retryButton').classList.contains('hidden')
+const formatShift = (shift) => shift.replace(/b/g, '♭')
 
 // Start new challenge
 function startNewChallenge() {
@@ -49,7 +50,7 @@ function startNewChallenge() {
   rootNoteElement.textContent = startNote.note
 
   const rootNoteShiftElement = document.getElementById('root-note-shift')
-  rootNoteShiftElement.textContent = startNote.shift
+  rootNoteShiftElement.textContent = formatShift(startNote.shift)
 
   addListener(document.body, 'click', (e) => {
     rootAudio.play()
@@ -71,7 +72,7 @@ function startNewChallenge() {
   resultElement.textContent = targetNote.note
 
   const resultShiftElement = document.getElementById('result-shift')
-  resultShiftElement.textContent = targetNote.shift
+  resultShiftElement.textContent = formatShift(targetNote.shift)
 
   addListener(resultContainerElement, 'click', (e) => {
     e.stopPropagation()
