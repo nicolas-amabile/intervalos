@@ -46,11 +46,10 @@ body {
   margin-bottom: 1rem;
   min-height: 3rem;
   display: flex;
-  align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: baseline;
 }
 
 .challenge span {
@@ -70,7 +69,6 @@ body {
 }
 
 .shift {
-  font-weight: 100;
   font-style: oblique;
   font-size: 2rem;
 }
