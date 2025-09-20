@@ -52,16 +52,12 @@ body {
   align-items: baseline;
 }
 
-.challenge span {
+.challenge>span {
   margin: 0 0.5rem 0 0;
 }
 
 .challenge .shift {
   font-size: 1.5rem;
-}
-
-#root-note {
-  margin: 0;
 }
 
 .bold {
@@ -71,6 +67,11 @@ body {
 .shift {
   font-style: oblique;
   font-size: 2rem;
+}
+
+#root-note-container {
+  display: flex;
+  align-items: baseline;
 }
 
 #result-container {
