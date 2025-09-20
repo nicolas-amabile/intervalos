@@ -73,7 +73,7 @@ function startNewChallenge() {
   const resultShiftElement = document.getElementById('result-shift')
   resultShiftElement.textContent = targetNote.shift
 
-  addListener(resultElement, 'click', (e) => {
+  addListener(resultContainerElement, 'click', (e) => {
     e.stopPropagation()
     if (isShowingResult()) {
       resultAudio.play()
