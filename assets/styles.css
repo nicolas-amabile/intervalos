@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 100;
@@ -14,7 +18,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin: 100px 20px;
+  margin: 0px 20px;
   color: white;
 }
 
@@ -23,7 +27,7 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 500px;
+  max-width: 600px;
   width: 100%;
 }
 
@@ -31,25 +35,25 @@ body {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 4rem 2rem;
   margin-bottom: 2rem;
   width: 100%;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  height: 15rem;
+  height: 20rem;
   align-content: center;
   cursor: pointer;
 }
 
 .challenge {
-  font-size: clamp(1.2rem, 8vw, 2rem);
-  margin-bottom: 1rem;
+  font-size: clamp(1.2rem, 8vw, 2.2rem);
+  margin-bottom: 1.5rem;
   min-height: 3rem;
   display: flex;
   justify-content: center;
   cursor: pointer;
   flex-wrap: wrap;
-  align-items: end;
+  align-items: baseline;
 }
 
 .challenge>span {
@@ -83,11 +87,16 @@ body {
   overflow: visible;
   transform: scale(1.03);
   cursor: pointer;
+  font-size: clamp(4rem, 5vw, 400rem);
 }
 
 .result {
-  font-size: 3.5em;
+  /* font-size: 3.5rem; */
   font-weight: bold;
+}
+
+#result-container>.shift {
+  font-size: 2.5rem;
 }
 
 .retry-button {
