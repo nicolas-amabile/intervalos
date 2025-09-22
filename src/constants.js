@@ -83,7 +83,7 @@ const AUDIO_FOR_NOTE = {
   B: 'b',
   'B#': 'c',
   'B##': 'c-',
-  Cbb: 'b',
+  Cbb: 'a-',
   Cb: 'b',
   C: 'c',
   'C#': 'c-',
