@@ -10,10 +10,7 @@ module.exports = (env, argv) => {
 
   return {
     mode: isProduction ? 'production' : 'development',
-    entry: {
-      main: './src/main.js',
-      styles: './assets/styles.css',
-    },
+    entry: './src/main.js',
     output: {
       filename: isProduction ? '[name].[contenthash:8].js' : '[name].js',
       path: path.resolve(__dirname, 'dist'),
@@ -107,12 +104,6 @@ module.exports = (env, argv) => {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
             chunks: 'all',
-          },
-          styles: {
-            name: 'styles',
-            test: /\.css$/,
-            chunks: 'all',
-            enforce: true,
           },
         },
       },
