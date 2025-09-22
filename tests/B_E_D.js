@@ -270,7 +270,7 @@ const DSC_TEST_CASES_B = [
   ['B', SHARP, VII, M, DSC, 'C#'],
 ]
 
-const NEW_TEST_CASES = [
+const B_E_D_TEST_CASES = [
   ...ASC_TEST_CASES_D,
   ...DSC_TEST_CASES_D,
   ...ASC_TEST_CASES_E,
@@ -280,5 +280,5 @@ const NEW_TEST_CASES = [
 ]
 
 module.exports = {
-  NEW_TEST_CASES,
+  B_E_D_TEST_CASES,
 }

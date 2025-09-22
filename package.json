@@ -10,6 +10,7 @@
   "scripts": {
     "test": "node tests/index.js",
     "build": "webpack --mode=production",
+    "serve:prod": "webpack serve --mode=production",
     "dev": "webpack-dev-server --mode=development --open"
   },
   "repository": {
@@ -21,6 +22,12 @@
   "homepage": "https://nicolas-amabile.github.io/intervalos/",
   "devDependencies": {
     "copy-webpack-plugin": "^13.0.1",
+    "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^7.0.2",
+    "html-webpack-plugin": "^5.6.4",
+    "mini-css-extract-plugin": "^2.9.4",
+    "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.14",
     "webpack": "^5.101.3",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"

@@ -7,12 +7,12 @@ const NOTES_ALL = [
   'B# / C / Dbb',
   'B## / C# / Db',
   'C## / D / Ebb',
-  'D# / Eb',
+  'D# / Eb / Fbb',
   'D## / E / Fb',
   'E# / F / Gbb',
   'E## / F# / Gb',
   'F## / G / Abb',
-  'F### / G# / Ab',
+  'F### / G# / Ab / Bbbb',
 ]
 
 const SHIFTS = {
@@ -77,6 +77,7 @@ const AUDIO_FOR_NOTE = {
   A: 'a',
   'A#': 'a-',
   'A##': 'b',
+  Bbbb: 'g-',
   Bbb: 'a',
   Bb: 'a-',
   B: 'b',
@@ -102,6 +103,7 @@ const AUDIO_FOR_NOTE = {
   F: 'f',
   'F#': 'f-',
   'F##': 'g',
+  'F###': 'g-',
   Gbb: 'f',
   Gb: 'f-',
   G: 'g',

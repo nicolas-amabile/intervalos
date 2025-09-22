@@ -1,8 +1,10 @@
-const { test } = require('./utils')
+const { test, generateTestCases } = require('./utils')
 const { calculateTargetNote, getAudioNameForNote } = require('../src/logic')
-const { CHALLENGE_CASES } = require('./challenge')
+const { A_G_TEST_CASES } = require('./A_G.js')
 const { AUDIO_NAME_TEST_CASES } = require('./audio.js')
-const { NEW_TEST_CASES } = require('./challenge_test_cases')
+const { B_E_D_TEST_CASES } = require('./B_E_D.js')
+const { C_F_TEST_CASES } = require('./C_F')
+
 const { getKeyByValue } = require('../src/utils')
 const { INTERVALS } = require('../src/constants')
 
@@ -45,16 +47,23 @@ function executeTests() {
   runTests('getAudioNameForNote', AUDIO_NAME_TEST_CASES, getAudioNameForNote, argsFormatterAudio)
   runTests(
     'calculateTargetNote - [A, G]',
-    CHALLENGE_CASES,
+    A_G_TEST_CASES,
     (...args) => calculateTargetNote(...args).text,
     argsFormatter
   )
   runTests(
     'calculateTargetNote - [B, D, E]',
-    NEW_TEST_CASES,
+    B_E_D_TEST_CASES,
+    (...args) => calculateTargetNote(...args).text,
+    argsFormatter
+  )
+  runTests(
+    'calculateTargetNote - [C, F]',
+    C_F_TEST_CASES,
     (...args) => calculateTargetNote(...args).text,
     argsFormatter
   )
 }
 
 executeTests()
+// generateTestCases(['A'])

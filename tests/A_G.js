@@ -9,10 +9,6 @@ const {
   OCTAVE,
   getQualityOptionsForInterval,
 } = require('../src/constants')
-const fs = require('fs')
-
-const { calculateTargetNote } = require('../src/logic')
-const { getKeyByValue } = require('../src/utils')
 
 const { ASC, DSC } = DIRECTION
 const { FLAT, NATURAL, SHARP } = SHIFTS
@@ -214,45 +210,8 @@ const DSC_TEST_CASES_G = [
 const ASC_TEST_CASES = [...ASC_TEST_CASES_A, ...ASC_TEST_CASES_G]
 const DSC_TEST_CASES = [...DSC_TEST_CASES_A, ...DSC_TEST_CASES_G]
 
-const CHALLENGE_CASES = [...ASC_TEST_CASES, ...DSC_TEST_CASES]
-
-const generateTestCases = (notes) =>
-  notes.reduce((acc, note) => {
-    Object.values(DIRECTION).forEach((direction) => {
-      Object.values(SHIFTS).forEach((shift) => {
-        Object.values(INTERVALS).forEach((interval) => {
-          const intervalOptions = getQualityOptionsForInterval(interval)
-          Object.values(intervalOptions).forEach((intervalQuality) => {
-            const { text: expected } = calculateTargetNote(note, shift, interval, intervalQuality, direction)
-            acc.push([
-              note,
-              shift.text,
-              getKeyByValue(INTERVALS, interval),
-              intervalQuality,
-              direction,
-              `<${expected}>`,
-            ])
-          })
-        })
-      })
-    })
-    return acc
-  }, [])
-
-const logTestCases = () => {
-  console.log('===================== TEST CASES =======================')
-  const notes = ['D', 'E', 'B']
-  const filename = 'challenge_test_cases.js'
-  fs.writeFile(filename, JSON.stringify(generateTestCases(notes)), (err) => {
-    if (err) {
-      console.error('Error writing to file:', err)
-    } else {
-      console.log(`Text successfully saved to ${fileName}`)
-    }
-  })
-  console.log('========================================================')
-}
+const A_G_TEST_CASES = [...ASC_TEST_CASES, ...DSC_TEST_CASES]
 
 module.exports = {
-  CHALLENGE_CASES,
+  A_G_TEST_CASES,
 }
