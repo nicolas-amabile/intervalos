@@ -9,21 +9,23 @@ module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production'
 
   return {
+    mode: isProduction ? 'production' : 'development',
     entry: {
       main: './src/main.js',
       styles: './assets/styles.css',
     },
     output: {
-      filename: isProduction ? '[name].[contenthash].js' : '[name].js',
+      filename: isProduction ? '[name].[contenthash:8].js' : '[name].js',
       path: path.resolve(__dirname, 'dist'),
       clean: true,
       publicPath: isProduction ? './' : '/',
+      assetModuleFilename: 'assets/[name].[contenthash:8][ext]',
     },
     module: {
       rules: [
         {
           test: /\.js$/,
-          exclude: [/node_modules/, path.resolve(__dirname, 'tests')],
+          exclude: [/node_modules/, path.resolve(__dirname, 'test')], // Fixed: 'test' not 'tests'
         },
         {
           test: /\.css$/i,
@@ -33,14 +35,21 @@ module.exports = (env, argv) => {
           test: /\.(png|svg|jpg|jpeg|gif)$/i,
           type: 'asset/resource',
           generator: {
-            filename: 'assets/images/[name].[contenthash][ext]',
+            filename: 'assets/images/[name].[contenthash:8][ext]',
           },
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/i,
           type: 'asset/resource',
           generator: {
-            filename: 'assets/fonts/[name].[contenthash][ext]',
+            filename: 'assets/fonts/[name].[contenthash:8][ext]',
+          },
+        },
+        {
+          test: /\.(mp3|wav|ogg|m4a)$/i,
+          type: 'asset/resource',
+          generator: {
+            filename: 'assets/notas/[name].[ext]?v=[contenthash:8]',
           },
         },
       ],
@@ -49,17 +58,39 @@ module.exports = (env, argv) => {
       new HtmlWebpackPlugin({
         template: './index.html',
         filename: 'index.html',
+        inject: 'head',
+        minify: isProduction
+          ? {
+              removeComments: true,
+              collapseWhitespace: true,
+              removeRedundantAttributes: true,
+              useShortDoctype: true,
+              removeEmptyAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              keepClosingSlash: true,
+              minifyJS: true,
+              minifyCSS: true,
+              minifyURLs: true,
+            }
+          : false,
       }),
       new CopyWebpackPlugin({
         patterns: [
-          { from: 'assets', to: 'assets' },
+          {
+            from: 'assets',
+            to: 'assets',
+            globOptions: {
+              // Don't copy CSS since it's processed as entry
+              ignore: ['**/styles.css'],
+            },
+          },
           { from: 'manifest.json', to: 'manifest.json' },
         ],
       }),
       ...(isProduction
         ? [
             new MiniCssExtractPlugin({
-              filename: '[name].[contenthash].css',
+              filename: '[name].[contenthash:8].css',
             }),
           ]
         : []),
@@ -67,12 +98,21 @@ module.exports = (env, argv) => {
     optimization: {
       moduleIds: 'deterministic',
       runtimeChunk: 'single',
+      usedExports: true,
+      sideEffects: false,
       splitChunks: {
+        chunks: 'all',
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendors',
             chunks: 'all',
+          },
+          styles: {
+            name: 'styles',
+            test: /\.css$/,
+            chunks: 'all',
+            enforce: true,
           },
         },
       },
@@ -84,25 +124,29 @@ module.exports = (env, argv) => {
               compress: {
                 drop_console: true,
                 drop_debugger: true,
+                pure_funcs: ['console.log', 'console.info'],
+                passes: 2,
+              },
+              mangle: true,
+              format: {
+                comments: false,
               },
             },
+            extractComments: false,
           }),
           new CssMinimizerPlugin(),
         ],
       }),
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      // Exclude test folders from resolution
+      extensions: ['.js', '.jsx'],
       alias: {
         '@': path.resolve(__dirname, 'src'),
-        // Prevent importing from /tests folder
-        tests: false,
+        test: false,
       },
-    },
-    // Exclude test files from the build
-    externals: {
-      // Add any test libraries you want to exclude
+      fallback: {
+        'chrome-extension': false,
+      },
     },
     devServer: {
       static: {
@@ -114,7 +158,6 @@ module.exports = (env, argv) => {
       liveReload: true,
       compress: true,
     },
-    // Performance optimizations
     performance: {
       hints: isProduction ? 'warning' : false,
       maxEntrypointSize: 250000,
